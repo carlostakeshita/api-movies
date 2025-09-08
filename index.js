@@ -1,24 +1,24 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const Movie = require("./models/Movie");
+import express from "express";
+import mongoose from "mongoose";
+import movieRoutes from "./routes/movieRoutes.js";
 
 const app = express();
+const PORT = 4000;
+
+// Middleware JSON
 app.use(express.json());
 
-// Conexão MongoDB
+// Rotas
+app.use("/api", movieRoutes);
+
+// Conexão com MongoDB
 mongoose.connect("mongodb://127.0.0.1:27017/api-movies")
-  .then(() => console.log("Conectado ao MongoDB 🎬"))
-  .catch(err => console.error(err));
+  .then(() => console.log("MongoDB conectado"))
+  .catch(err => console.log("Erro MongoDB:", err));
 
-// Rota principal - lista de filmes
-app.get("/", async (req, res) => {
-  try {
-    const movies = await Movie.find();
-    res.json(movies);
-  } catch (err) {
-    res.status(500).json({ error: "Erro ao buscar filmes" });
-  }
+// Servidor
+app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
+
+app.get("/", (req, res) => {
+  res.send("API Movies está funcionando!");
 });
-
-const PORT = 3000;
-app.listen(PORT, () => console.log(`Servidor rodando em http://localhost:${PORT}`));
